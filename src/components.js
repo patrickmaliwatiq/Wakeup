@@ -43,6 +43,13 @@ Crafty.c('Bush', {
   },
 });
 
+Crafty.c('DeskSet', {
+  init: function() {
+    this.requires('Actor, Color, Solid')
+      .color('#FF0000');
+  },
+})
+
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
   init: function() {
@@ -96,5 +103,6 @@ Crafty.c('Village', {
  
   collect: function() {
     this.destroy();
+    Crafty.trigger('VillageVisited', this);
   }
 });
