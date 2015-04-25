@@ -10,7 +10,7 @@ Crafty.scene('Game', function() {
   }
  
   // Player character, placed at 5, 5 on our grid
-  this.player = Crafty.e('PlayerCharacter').at(5, 5);
+  this.player = Crafty.e('Amber').at(5, 5);
   this.occupied[this.player.at().x][this.player.at().y] = true;
  
   // Place a tree at every edge square on our grid of 16x16 tiles
@@ -22,7 +22,7 @@ Crafty.scene('Game', function() {
         // Place a tree entity at the current tile
         Crafty.e('Tree').at(x, y);
         this.occupied[x][y] = true;
-      } else if (Math.random() < 0.06 && !this.occupied[x][y]) {
+      } else if (Math.random() < 0.02 && !this.occupied[x][y]) {
         // Place a bush entity at the current tile
         Crafty.e('Bush').at(x, y);
         this.occupied[x][y] = true;
@@ -30,25 +30,31 @@ Crafty.scene('Game', function() {
     }
   }
  
-  // Generate up to five villages on the map in random locations
-  var max_villages = 5;
+  // Generate up to five packages on the map in random locations
+  var max_packages = employees.length;
   for (var x = 0; x < Game.map_grid.width; x++) {
     for (var y = 0; y < Game.map_grid.height; y++) {
       if (Math.random() < 0.02) {
-        if (Crafty('Village').length < max_villages && !this.occupied[x][y]) {
-          Crafty.e('Village').at(x, y);
+        if (Crafty('Package').length < max_packages && !this.occupied[x][y]) {
+          var count = Crafty('Package').length;
+          Crafty.e('Package').setTo(employees[count].Name).at(x, y);
         }
       }
     }
   }
+
+  _(employees).each(function(employee) {
+    debugger;
+    Crafty.e('Desk').setOwner(employee.Name).at(employee.DeskCoordinates[0], employee.DeskCoordinates[1]);
+  });
  
-  this.show_victory = this.bind('VillageVisited', function() {
-    if (!Crafty('Village').length) {
+  this.show_victory = this.bind('PackageDroppedOff', function() {
+    if (!Crafty('Package').length) {
       Crafty.scene('Victory');
     }
   });
 }, function() {
-  this.unbind('VillageVisited', this.show_victory);
+  this.unbind('PackageDroppedOff', this.show_victory);
 });
  
 Crafty.scene('Victory', function() {

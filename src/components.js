@@ -43,15 +43,23 @@ Crafty.c('Bush', {
   },
 });
 
-Crafty.c('DeskSet', {
+Crafty.c('Desk', {
   init: function() {
-    this.requires('Actor, Color, Solid')
+    this.requires('Actor, Color, Collision')
       .color('#FF0000');
+      // .onHit('Amber', this.recievePackage);
   },
+  recievePackage: function() {
+    console.log('Drop package at:' + this.name)
+  },
+  setOwner: function(owner) {
+    this.owner = owner;
+    return this;
+  }
 })
 
 // This is the player-controlled character
-Crafty.c('PlayerCharacter', {
+Crafty.c('Amber', {
   init: function() {
     this.requires('Actor, Fourway, Color')
       .fourway(4)
@@ -60,14 +68,16 @@ Crafty.c('PlayerCharacter', {
 });
 
 // This is the player-controlled character
-Crafty.c('PlayerCharacter', {
+Crafty.c('Amber', {
   init: function() {
+    this.packages = [];
     this.requires('Actor, Fourway, Color, Collision')
       .fourway(4)
       .color('rgb(20, 75, 40)')
       .stopOnSolids()
-      // Whenever the PC touches a village, respond to the event
-      .onHit('Village', this.visitVillage);
+      .onHit('Desk', this.visitDesk)
+      // Whenever the PC touches a package, respond to the event
+      .onHit('Package', this.pickupPackage);
   },
  
   // Registers a stop-movement function to be called when
@@ -87,22 +97,46 @@ Crafty.c('PlayerCharacter', {
     }
   },
 
-   // Respond to this player visiting a village
-  visitVillage: function(data) {
-    villlage = data[0].obj;
-    villlage.collect();
+   // Respond to this player visiting a package
+  pickupPackage: function(data) {
+    var package = data[0].obj;
+    this.packages.push(package);
+    package.pickUp();
+    console.log("Picked up package for: " + package.to);
+  },
+
+  visitDesk: function(data) {
+    var desk = data[0].obj;
+    var owner = desk.owner;
+    var package = _(this.packages).findWhere({ to: owner });
+    if (package) {
+      console.log("Delivered package to: " + package.to);
+      this.packages = _(this.packages).reject(function(pkg) {
+        return pkg.to === owner;
+      });
+      package.destroy();
+      // TODO: Figure out how to do package management
+      // Crafty.trigger('PackageDroppedOff', this);
+    } else {
+      console.log("You do not have a package for: " + owner);
+    }
   }
 });
 
-// A village is a tile on the grid that the PC must visit in order to win the game
-Crafty.c('Village', {
+// A package is a tile on the grid that the PC must visit in order to win the game
+Crafty.c('Package', {
   init: function() {
     this.requires('Actor, Color')
       .color('rgb(170, 125, 40)');
   },
+
+  setTo: function(to) {
+    this.to = to;
+    return this;
+  },
  
-  collect: function() {
+  pickUp: function() {
     this.destroy();
-    Crafty.trigger('VillageVisited', this);
+    // Crafty.trigger('PackageDroppedOff', this);
   }
 });
