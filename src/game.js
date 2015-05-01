@@ -30,37 +30,25 @@ Game = {
     // Simply start the "Game" scene to get things going
     Crafty.scene('Game');
 
-    // Player character, placed at 5, 5 on our grid
-    Crafty.e('Amber').at(5, 5);
- 
-    // Place a tree at every edge square on our grid of 16x16 tiles
-    // for (var x = 0; x < Game.map_grid.width; x++) {
-    //   for (var y = 0; y < Game.map_grid.height; y++) {
-    //     var at_edge = x == 0 || x == Game.map_grid.width - 1 || y == 0 || y == Game.map_grid.height - 1;
- 
-    //     if (at_edge) {
-    //       // Place a tree entity at the current tile
-    //       Crafty.e('Tree').at(x, y);
-    //     } else if (Math.random() < 0.01) {
-    //       // Place a bush entity at the current tile
-    //       Crafty.e('Bush').at(x, y);
-    //     }
-    //   }
-    // }
+    Crafty.e('Hub');
 
-    // Generate up to five villages on the map in random locations
-    // var max_villages = 25;
-    // for (var x = 0; x < Game.map_grid.width; x++) {
-    //   for (var y = 0; y < Game.map_grid.height; y++) {
-    //     if (Math.random() < 0.02) {
-    //       Crafty.e('Village').at(x, y);
- 
-    //       if (Crafty('Village').length >= max_villages) {
-    //         return;
-    //       }
-    //     }
-    //   }
-    // }
+    Game.createMap();
 
+  },
+
+  createMap: function() {
+  	var wallWidth = 5;
+    _(rooms).each(function(room) {
+
+    	_(room.Horizontal).each(function(wall) {
+    		var coords = wall.Coordinates;
+    		Crafty.e('Wall').attr({h: wallWidth, w: wall.Distance}).at(coords[0], coords[1]);
+    	});
+
+    	_(room.Vertical).each(function(wall) {
+    		var coords = wall.Coordinates;
+    		Crafty.e('Wall').attr({w: wallWidth, h: wall.Distance}).at(coords[0], coords[1]);
+    	});
+    })
   }
 }

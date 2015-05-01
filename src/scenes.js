@@ -10,23 +10,24 @@ Crafty.scene('Game', function() {
   }
  
   // Player character, placed at 5, 5 on our grid
-  this.player = Crafty.e('Amber').at(5, 5);
+  this.player = Crafty.e('Amber').attr({h:10, w:10}).at(5, 5);
   this.occupied[this.player.at().x][this.player.at().y] = true;
  
-  // Place a tree at every edge square on our grid of 16x16 tiles
+  // Place a border at every edge square on our grid of 16x16 tiles
   for (var x = 0; x < Game.map_grid.width; x++) {
     for (var y = 0; y < Game.map_grid.height; y++) {
       var at_edge = x == 0 || x == Game.map_grid.width - 1 || y == 0 || y == Game.map_grid.height - 1;
  
       if (at_edge) {
-        // Place a tree entity at the current tile
-        Crafty.e('Tree').at(x, y);
+        // Place a border entity at the current tile
+        Crafty.e('Border').at(x, y);
         this.occupied[x][y] = true;
-      } else if (Math.random() < 0.02 && !this.occupied[x][y]) {
-        // Place a bush entity at the current tile
-        Crafty.e('Bush').at(x, y);
-        this.occupied[x][y] = true;
-      }
+      } 
+      // else if (Math.random() < 0.02 && !this.occupied[x][y]) {
+      //   // Place a wall entity at the current tile
+      //   Crafty.e('Wall').at(x, y);
+      //   this.occupied[x][y] = true;
+      // }
     }
   }
  
@@ -37,22 +38,37 @@ Crafty.scene('Game', function() {
       if (Math.random() < 0.02) {
         if (Crafty('Package').length < max_packages && !this.occupied[x][y]) {
           var count = Crafty('Package').length;
-          Crafty.e('Package').setTo(employees[count].Name).at(x, y);
+          Crafty.e('Package').attr({to: employees[count].Name}).at(x, y);
         }
       }
     }
   }
 
+  Crafty.e('Packages').at(8, 8)
+  
+Crafty.e("DiagonalLine").attr({x: 10, y: 20, w: 5, h: 7});  
+
+
   _(employees).each(function(employee) {
-    debugger;
-    Crafty.e('Desk').setOwner(employee.Name).at(employee.DeskCoordinates[0], employee.DeskCoordinates[1]);
+    Crafty.e('Desk').attr({owner: employee.Name}).at(employee.DeskCoordinates[0], employee.DeskCoordinates[1]);
+  });
+
+  var hub = Crafty.e('Hub');
+  this.bind('ChoosePackages', function() {
+        hub.text(
+          'There are 6 packages but Amber has noodle arms.' +   
+          'She can only carry up to 10 pounds of packages');
+  });
+
+  this.bind('UnchoosePackages', function() {
+      hub.text('Nothing');
   });
  
-  this.show_victory = this.bind('PackageDroppedOff', function() {
-    if (!Crafty('Package').length) {
-      Crafty.scene('Victory');
-    }
-  });
+  // this.show_victory = this.bind('PackageDroppedOff', function() {
+  //   if (!Crafty('Package').length) {
+  //     Crafty.scene('Victory');
+  //   }
+  // });
 }, function() {
   this.unbind('PackageDroppedOff', this.show_victory);
 });

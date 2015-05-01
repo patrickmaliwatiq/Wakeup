@@ -27,16 +27,16 @@ Crafty.c('Actor', {
   },
 });
  
-// A Tree is just an Actor with a certain color
-Crafty.c('Tree', {
+// A Border is just an Actor with a certain color
+Crafty.c('Border', {
   init: function() {
     this.requires('Actor, Color, Solid')
       .color('rgb(20, 125, 40)');
   },
 });
  
-// A Bush is just an Actor with a certain color
-Crafty.c('Bush', {
+// A Wush is just an Actor with a certain color
+Crafty.c('Wall', {
   init: function() {
     this.requires('Actor, Color, Solid')
       .color('rgb(20, 185, 40)');
@@ -47,37 +47,30 @@ Crafty.c('Desk', {
   init: function() {
     this.requires('Actor, Color, Collision')
       .color('#FF0000');
-      // .onHit('Amber', this.recievePackage);
   },
   recievePackage: function() {
     console.log('Drop package at:' + this.name)
-  },
-  setOwner: function(owner) {
-    this.owner = owner;
-    return this;
   }
 })
 
 // This is the player-controlled character
 Crafty.c('Amber', {
   init: function() {
-    this.requires('Actor, Fourway, Color')
-      .fourway(4)
-      .color('rgb(20, 75, 40)');
-  }
-});
-
-// This is the player-controlled character
-Crafty.c('Amber', {
-  init: function() {
     this.packages = [];
     this.requires('Actor, Fourway, Color, Collision')
-      .fourway(4)
+      .fourway(1.75)
       .color('rgb(20, 75, 40)')
       .stopOnSolids()
-      .onHit('Desk', this.visitDesk)
-      // Whenever the PC touches a package, respond to the event
-      .onHit('Package', this.pickupPackage);
+      .checkHits('Package, Desk')
+      .bind('HitOn', function(data) {
+        var entity =  data[0].obj
+
+        if (entity.has('Package')) {
+          this.pickupPackage(data) 
+        } else if (entity.has('Desk') ) {
+          this.visitDesk(data);
+        }
+      });
   },
  
   // Registers a stop-movement function to be called when
@@ -101,7 +94,7 @@ Crafty.c('Amber', {
   pickupPackage: function(data) {
     var package = data[0].obj;
     this.packages.push(package);
-    package.pickUp();
+    package.destroy();
     console.log("Picked up package for: " + package.to);
   },
 
@@ -114,7 +107,6 @@ Crafty.c('Amber', {
       this.packages = _(this.packages).reject(function(pkg) {
         return pkg.to === owner;
       });
-      package.destroy();
       // TODO: Figure out how to do package management
       // Crafty.trigger('PackageDroppedOff', this);
     } else {
@@ -128,15 +120,56 @@ Crafty.c('Package', {
   init: function() {
     this.requires('Actor, Color')
       .color('rgb(170, 125, 40)');
-  },
-
-  setTo: function(to) {
-    this.to = to;
-    return this;
-  },
- 
-  pickUp: function() {
-    this.destroy();
-    // Crafty.trigger('PackageDroppedOff', this);
   }
+});
+
+Crafty.c('Packages', {
+  init: function() {
+    this.requires('Actor, Color, Collision')
+      .color('brown')
+      .checkHits('Amber')
+      .bind('HitOn', function(data) {
+        this.packagePickupMode = true;
+        Crafty.trigger('ChoosePackages');
+      })
+      .bind('HitOff', function(data) {
+        Crafty.trigger('UnchoosePackages');
+        this.packagePickupMode = false;
+      }).bind('KeyDown', function(e) {
+        if (!this.packagePickupMode) return;
+
+        if (e.key === Crafty.keys['1']) { // 1
+          console.log('Picked up package #1');
+        }
+      });
+  }
+});
+
+Crafty.c('Hub', {
+  init: function() {
+    this.requires('2D, DOM, Text')
+      .attr({
+        h: 200,
+        w: 400,
+        x: Game.width() - 325,
+        y: Game.height() - 50
+      });
+  },
+});
+
+Crafty.c("DiagonalLine", {
+    init: function () {
+        this.requires("2D, Canvas, Wall");
+        this.bind("Draw", this._draw_me);
+        this.ready = true;
+    },
+    _draw_me: function (e) {
+        var ctx = e.ctx;
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "red";
+        ctx.beginPath();
+        ctx.moveTo(e.pos._x, e.pos._y);
+        ctx.lineTo(e.pos._x + 35, e.pos._y + 37);
+        ctx.stroke();
+    }
 });
