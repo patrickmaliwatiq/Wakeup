@@ -1,5 +1,5 @@
 Crafty.scene('Game', function() {
- 
+  var self = this;
   // A 2D array to keep track of all occupied tiles
   this.occupied = new Array(Game.map_grid.width);
   for (var i = 0; i < Game.map_grid.width; i++) {
@@ -13,23 +13,24 @@ Crafty.scene('Game', function() {
   this.player = Crafty.e('Amber').attr({h:10, w:10}).at(5, 5);
   this.occupied[this.player.at().x][this.player.at().y] = true;
  
-  // Place a border at every edge square on our grid of 16x16 tiles
-  for (var x = 0; x < Game.map_grid.width; x++) {
-    for (var y = 0; y < Game.map_grid.height; y++) {
-      var at_edge = x == 0 || x == Game.map_grid.width - 1 || y == 0 || y == Game.map_grid.height - 1;
+  // // Place a border at every edge square on our grid of 16x16 tiles
+  // for (var x = 0; x < Game.map_grid.width; x++) {
+  //   for (var y = 0; y < Game.map_grid.height; y++) {
+  //     var at_edge = x == 0 || x == Game.map_grid.width - 1 || y == 0 || y == Game.map_grid.height - 1;
  
-      if (at_edge) {
-        // Place a border entity at the current tile
-        Crafty.e('Border').at(x, y);
-        this.occupied[x][y] = true;
-      } 
-      // else if (Math.random() < 0.02 && !this.occupied[x][y]) {
-      //   // Place a wall entity at the current tile
-      //   Crafty.e('Wall').at(x, y);
-      //   this.occupied[x][y] = true;
-      // }
-    }
-  }
+  //     if (at_edge) {
+  //       // Place a border entity at the current tile
+  //       Crafty.e('Border').at(x, y);
+  //       this.occupied[x][y] = true;
+  //     } 
+  //     // else if (Math.random() < 0.02 && !this.occupied[x][y]) {
+  //     //   // Place a wall entity at the current tile
+  //     //   Crafty.e('Wall').at(x, y);
+  //     //   this.occupied[x][y] = true;
+  //     // }
+  //   }
+  // }
+
  
   // Generate up to five packages on the map in random locations
   var max_packages = employees.length;
@@ -46,9 +47,6 @@ Crafty.scene('Game', function() {
 
   Crafty.e('Packages').at(8, 8)
   
-Crafty.e("DiagonalLine").attr({x: 10, y: 20, w: 5, h: 7});  
-
-
   _(employees).each(function(employee) {
     Crafty.e('Desk').attr({owner: employee.Name}).at(employee.DeskCoordinates[0], employee.DeskCoordinates[1]);
   });

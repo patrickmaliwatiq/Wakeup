@@ -156,20 +156,3 @@ Crafty.c('Hub', {
       });
   },
 });
-
-Crafty.c("DiagonalLine", {
-    init: function () {
-        this.requires("2D, Canvas, Wall");
-        this.bind("Draw", this._draw_me);
-        this.ready = true;
-    },
-    _draw_me: function (e) {
-        var ctx = e.ctx;
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "red";
-        ctx.beginPath();
-        ctx.moveTo(e.pos._x, e.pos._y);
-        ctx.lineTo(e.pos._x + 35, e.pos._y + 37);
-        ctx.stroke();
-    }
-});

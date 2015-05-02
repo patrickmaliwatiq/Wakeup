@@ -37,18 +37,18 @@ Game = {
   },
 
   createMap: function() {
-  	var wallWidth = 5;
-    _(rooms).each(function(room) {
-
-    	_(room.Horizontal).each(function(wall) {
-    		var coords = wall.Coordinates;
-    		Crafty.e('Wall').attr({h: wallWidth, w: wall.Distance}).at(coords[0], coords[1]);
-    	});
-
-    	_(room.Vertical).each(function(wall) {
-    		var coords = wall.Coordinates;
-    		Crafty.e('Wall').attr({w: wallWidth, h: wall.Distance}).at(coords[0], coords[1]);
-    	});
-    })
+    var xIdx;
+    var yIdx;
+    _.each(map, function(y, yIndex) {
+      yIdx = yIndex;
+      _.each(y, function(x, xIndex) {
+        xIdx = xIndex;
+        if (x === 1) {
+          debugger;
+          Crafty.e('Wall').at(xIdx, yIdx);
+          self.occupied[xIdx][yIdx] = true;
+        }
+      });
+    });
   }
 }
