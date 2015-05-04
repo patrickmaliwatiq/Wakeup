@@ -46,7 +46,7 @@ Game = {
         if (x === 1) {
           debugger;
           Crafty.e('Wall').at(xIdx, yIdx);
-          self.occupied[xIdx][yIdx] = true;
+          // self.occupied[xIdx][yIdx] = true;
         }
       });
     });

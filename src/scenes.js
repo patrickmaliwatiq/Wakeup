@@ -10,7 +10,7 @@ Crafty.scene('Game', function() {
   }
  
   // Player character, placed at 5, 5 on our grid
-  this.player = Crafty.e('Amber').attr({h:10, w:10}).at(5, 5);
+  this.player = Crafty.e('Amber').attr({h:10, w:10}).at(5, 15);
   this.occupied[this.player.at().x][this.player.at().y] = true;
  
   // // Place a border at every edge square on our grid of 16x16 tiles

@@ -39,6 +39,7 @@ Crafty.c('Border', {
 Crafty.c('Wall', {
   init: function() {
     this.requires('Actor, Color, Solid')
+      .attr({w: 8, h: 8})
       .color('rgb(20, 185, 40)');
   },
 });
