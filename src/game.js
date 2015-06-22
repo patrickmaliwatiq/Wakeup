@@ -25,7 +25,7 @@ Game = {
   start: function() {
     // Start crafty and set a background color so that we can see it's working
     Crafty.init(Game.width(), Game.height());
-    Crafty.background("url('assets/blueprint.jpg') no-repeat center center");
+    Crafty.background("url('assets/8bmap.jpg') no-repeat center center");
 
     // Simply start the "Game" scene to get things going
     Crafty.scene('Game');
@@ -33,7 +33,6 @@ Game = {
     Crafty.e('Hub');
 
     Game.createMap();
-
   },
 
   createMap: function() {
@@ -44,11 +43,32 @@ Game = {
       _.each(y, function(x, xIndex) {
         xIdx = xIndex;
         if (x === 1) {
-          debugger;
           Crafty.e('Wall').at(xIdx, yIdx);
           // self.occupied[xIdx][yIdx] = true;
         }
       });
     });
+
+
+    Crafty.e('Packages').at(7.5, 25)
+
+    // Wall by Amber's desk
+    // Crafty.e("Actor, 2D, DOM, Color, Collision, SolidHitBox, DebugPolygon")
+    Crafty.e("Actor, 2D, DOM, Color, Collision, Solid")
+      .attr({x: 116, y: 325, w: 35, h: 75})
+      .collision(new Crafty.polygon([0,0],[10,0],[35,75], [0, 75]));
+
+    // Crafty.e("Actor, 2D, DOM, Color, Collision, SolidHitBox, DebugPolygon")
+    // Crafty.e("Actor, 2D, DOM, Color, Collision, Solid")
+    //   .attr({x: 326, y: 524})
+    //   .collision(new Crafty.polygon([7,0],[0,33],[35,23]));
+
+    _.each(desks, function(desk) {
+      Crafty.e("Actor, 2D, DOM, Color, Collision, SolidHitBox, DebugPolygon")
+      // Crafty.e("Actor, 2D, DOM, Color, Collision, Solid")
+        .attr(desk.location)
+        .collision(new Crafty.polygon(desk.coordinates[0], desk.coordinates[1], desk.coordinates[2]));
+    })
+
   }
 }

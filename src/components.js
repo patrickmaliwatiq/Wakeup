@@ -40,7 +40,7 @@ Crafty.c('Wall', {
   init: function() {
     this.requires('Actor, Color, Solid')
       .attr({w: 8, h: 8})
-      .color('rgb(20, 185, 40)');
+      // .color('rgb(20, 185, 40)');
   },
 });
 
@@ -59,8 +59,9 @@ Crafty.c('Amber', {
   init: function() {
     this.packages = [];
     this.requires('Actor, Fourway, Color, Collision')
+      .attr({z:999999})
       .fourway(1.75)
-      .color('rgb(20, 75, 40)')
+      .color('orange')
       .stopOnSolids()
       .checkHits('Package, Desk')
       .bind('HitOn', function(data) {
@@ -127,6 +128,7 @@ Crafty.c('Package', {
 Crafty.c('Packages', {
   init: function() {
     this.requires('Actor, Color, Collision')
+      .attr({h: 30, w: 25})
       .color('brown')
       .checkHits('Amber')
       .bind('HitOn', function(data) {
@@ -148,7 +150,8 @@ Crafty.c('Packages', {
 
 Crafty.c('Hub', {
   init: function() {
-    this.requires('2D, DOM, Text')
+    this.requires('2D, DOM, Text, Color')
+      .color('#FFF', 0.05)
       .attr({
         h: 200,
         w: 400,
